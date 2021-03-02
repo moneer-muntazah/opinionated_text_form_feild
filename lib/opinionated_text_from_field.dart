@@ -6,7 +6,7 @@ typedef LoadingChecker = void Function(bool);
 typedef ErrorHandler = void Function(Object);
 
 class Opinion {
-  const Opinion({this.message, this.color, this.enforceRule = false});
+  const Opinion(this.message, {this.color, this.enforceRule = false});
 
   final String message;
   final Color color;
@@ -20,22 +20,22 @@ class Opinion {
 class OpinionatedTextFormField extends StatefulWidget {
   OpinionatedTextFormField(
       {Key key,
-        this.initialValue,
-        this.validator,
-        @required this.feedbacker,
-        @required this.maxLength,
-        this.borderWidth = 1.0,
-        this.defaultBorderColor = Colors.black12,
-        InputBorder border = const OutlineInputBorder(),
-        this.onSaved,
-        this.labelText,
-        this.contentPadding = const EdgeInsets.all(15),
-        @required this.onError,
-        this.onLoading,
-        this.keyboardType})
+      this.initialValue,
+      this.validator,
+      @required this.feedbacker,
+      @required this.maxLength,
+      this.borderWidth = 1.0,
+      this.defaultBorderColor = Colors.black12,
+      InputBorder border = const OutlineInputBorder(),
+      this.onSaved,
+      this.labelText,
+      this.contentPadding = const EdgeInsets.all(15),
+      @required this.onError,
+      this.onLoading,
+      this.keyboardType})
       : border = border.copyWith(
-      borderSide:
-      BorderSide(width: borderWidth, color: defaultBorderColor)),
+            borderSide:
+                BorderSide(width: borderWidth, color: defaultBorderColor)),
         super(key: key);
 
   final String initialValue;
@@ -102,7 +102,7 @@ class _OpinionatedTextFormFieldState extends State<OpinionatedTextFormField> {
         _errorStyle = TextStyle(color: _temp.color);
         _errorBorder = widget.border.copyWith(
             borderSide:
-            BorderSide(width: widget.borderWidth, color: _temp.color));
+                BorderSide(width: widget.borderWidth, color: _temp.color));
         if (_temp.enforceRule == true) {
           _enforcedRule = _temp;
         }
@@ -146,36 +146,41 @@ class _OpinionatedTextFormFieldState extends State<OpinionatedTextFormField> {
 
   @override
   Widget build(BuildContext context) => TextFormField(
-    key: _fieldKey,
-    initialValue: widget.initialValue,
-    keyboardType: widget.keyboardType,
-    enabled: !isLoading,
-    maxLength: widget.maxLength,
-    onSaved: widget.onSaved,
-    validator: _validator,
-    onChanged: _onChange,
-    decoration: InputDecoration(
-      labelText: widget.labelText,
-      errorMaxLines: 3,
-      border: widget.border,
-      enabledBorder: widget.border,
-      counterText: '',
-      errorStyle: _errorStyle,
-      errorBorder: _errorBorder,
-      focusedErrorBorder: _errorBorder,
-      contentPadding: widget.contentPadding,
-      suffixIcon: isLoading
-          ? Transform(
-        transform: Matrix4.translationValues(10.0, 0, 0),
-        child: CircularProgressIndicator(
-          strokeWidth: 1.5,
-          valueColor:
-          AlwaysStoppedAnimation(Theme.of(context).disabledColor),
+        key: _fieldKey,
+        initialValue: widget.initialValue,
+        keyboardType: widget.keyboardType,
+        enabled: !isLoading,
+        maxLength: widget.maxLength,
+        onSaved: widget.onSaved,
+        validator: _validator,
+        onChanged: _onChange,
+        decoration: InputDecoration(
+          labelText: widget.labelText,
+          errorMaxLines: 3,
+          border: widget.border,
+          enabledBorder: widget.border,
+          counterText: '',
+          errorStyle: _errorStyle,
+          errorBorder: _errorBorder,
+          focusedErrorBorder: _errorBorder,
+          contentPadding: widget.contentPadding,
+          suffixIcon: isLoading
+              ? Transform(
+                  transform: Matrix4.translationValues(
+                      Directionality.of(context) == TextDirection.ltr
+                          ? -10.0
+                          : 10.0,
+                      0,
+                      0),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 1.5,
+                    valueColor:
+                        AlwaysStoppedAnimation(Theme.of(context).disabledColor),
+                  ),
+                )
+              : const SizedBox(),
+          suffixIconConstraints:
+              const BoxConstraints(maxWidth: 20, maxHeight: 20),
         ),
-      )
-          : const SizedBox(),
-      suffixIconConstraints:
-      const BoxConstraints(maxWidth: 20, maxHeight: 20),
-    ),
-  );
+      );
 }

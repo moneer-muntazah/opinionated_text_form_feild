@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
                 children: <Widget>[
                   TextFormField(
                     decoration:
-                    const InputDecoration(border: OutlineInputBorder()),
+                        const InputDecoration(border: OutlineInputBorder()),
                   ),
                   const SizedBox(height: 15),
                   OpinionatedTextFormField(
@@ -42,8 +42,7 @@ class MyApp extends StatelessWidget {
                       // throw Exception
                       return Future.delayed(
                         Duration(seconds: 5),
-                            () => const Opinion(
-                            message:
+                        () => const Opinion(
                             'Dont panic it is just a simultaneous validation!',
                             color: Colors.amber,
                             enforceRule: true),
