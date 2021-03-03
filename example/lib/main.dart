@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
                   ),
                   const SizedBox(height: 15),
                   OpinionatedTextFormField(
+                    labelText: 'label text',
                     validator: (value) {
                       print(value);
                       if (value.isEmpty || value == '12345678') {

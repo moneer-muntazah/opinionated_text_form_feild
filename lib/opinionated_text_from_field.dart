@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-typedef AutoFormFieldFeedbacker = FutureOr<Opinion> Function(String);
-typedef LoadingChecker = void Function(bool);
-typedef ErrorHandler = void Function(Object);
+typedef _AutoFormFieldFeedbacker = FutureOr<Opinion> Function(String);
+typedef _LoadingChecker = void Function(bool);
+typedef _ErrorHandler = void Function(Object);
 
 class Opinion {
   const Opinion(this.message, {this.color, this.enforceRule = false});
@@ -30,7 +30,7 @@ class OpinionatedTextFormField extends StatefulWidget {
       this.onSaved,
       this.labelText,
       this.contentPadding = const EdgeInsets.all(15),
-      @required this.onError,
+      this.onError,
       this.onLoading,
       this.keyboardType})
       : border = border.copyWith(
@@ -45,12 +45,12 @@ class OpinionatedTextFormField extends StatefulWidget {
   final Color defaultBorderColor;
   final FormFieldValidator<String> validator;
   final FormFieldSetter<String> onSaved;
-  final AutoFormFieldFeedbacker feedbacker;
+  final _AutoFormFieldFeedbacker feedbacker;
   final InputBorder border;
-  final ErrorHandler onError;
+  final _ErrorHandler onError;
   final TextInputType keyboardType;
   final EdgeInsets contentPadding;
-  final LoadingChecker onLoading;
+  final _LoadingChecker onLoading;
 
   @override
   _OpinionatedTextFormFieldState createState() =>
@@ -137,7 +137,7 @@ class _OpinionatedTextFormFieldState extends State<OpinionatedTextFormField> {
           isLoading = false;
         });
         _fieldKey.currentState.reset();
-        widget.onError(e);
+        if (widget.onError != null) widget.onError(e);
       }
     } else {
       _changedOpinionMessage = null;
