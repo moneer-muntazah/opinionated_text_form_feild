@@ -6,17 +6,19 @@ typedef _LoadingChecker = void Function(bool);
 typedef _ErrorHandler = void Function(Object);
 
 class Opinion {
-  const Opinion(this.message, {this.color, this.enforceRule = false});
+  const Opinion(this.message, {this.color, this.enforce = false});
 
   final String message;
   final Color color;
-  final bool enforceRule;
+  final bool enforce;
 
   @override
   String toString() => 'Opinion { message: $message, color: $color,'
-      'enforceRule: $enforceRule }';
+      'enforce: $enforce }';
 }
 
+/// A TextFormField that can send an async request with a customized message,
+/// and color, but only when the value inputted has reached its max length.
 class OpinionatedTextFormField extends StatefulWidget {
   OpinionatedTextFormField(
       {Key key,
@@ -33,7 +35,13 @@ class OpinionatedTextFormField extends StatefulWidget {
       this.onError,
       this.onLoading,
       this.keyboardType})
-      : border = border.copyWith(
+      : assert(feedbacker != null,
+            'If you do not need to use feedbacker, use TextFormField instead'),
+        assert(
+            maxLength != null,
+            'In order for the widget to know when to call feedbacker, '
+            'the expected value has to be of a set max length'),
+        border = border.copyWith(
             borderSide:
                 BorderSide(width: borderWidth, color: defaultBorderColor)),
         super(key: key);
@@ -63,7 +71,7 @@ class _OpinionatedTextFormFieldState extends State<OpinionatedTextFormField> {
   InputBorder _errorBorder;
   String _changedOpinionMessage;
   Opinion _opinion;
-  Opinion _enforcedRule;
+  Opinion _enforced;
   bool _isLoading = false;
 
   bool get isLoading => _isLoading;
@@ -71,18 +79,22 @@ class _OpinionatedTextFormFieldState extends State<OpinionatedTextFormField> {
   set isLoading(bool value) {
     _isLoading = value;
     if (widget.onLoading != null) widget.onLoading(value);
+    final currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
   }
 
   String _validator(String value) {
-    if (_enforcedRule != null) {
+    if (_enforced != null) {
       setState(() {
-        _errorStyle = TextStyle(color: _enforcedRule.color);
+        _errorStyle = TextStyle(color: _enforced.color);
         _errorBorder = widget.border.copyWith(
-            borderSide: BorderSide(
-                width: widget.borderWidth, color: _enforcedRule.color));
+            borderSide:
+                BorderSide(width: widget.borderWidth, color: _enforced.color));
         isLoading = false;
       });
-      return _enforcedRule.message;
+      return _enforced.message;
     }
     if (widget.validator != null) {
       final validationMessage = widget.validator(value);
@@ -103,8 +115,8 @@ class _OpinionatedTextFormFieldState extends State<OpinionatedTextFormField> {
         _errorBorder = widget.border.copyWith(
             borderSide:
                 BorderSide(width: widget.borderWidth, color: _temp.color));
-        if (_temp.enforceRule == true) {
-          _enforcedRule = _temp;
+        if (_temp.enforce == true) {
+          _enforced = _temp;
         }
         isLoading = false;
       });
@@ -117,7 +129,7 @@ class _OpinionatedTextFormFieldState extends State<OpinionatedTextFormField> {
   }
 
   void _onChange(String value) async {
-    _enforcedRule = null;
+    _enforced = null;
     if (value != widget.initialValue &&
         value != _changedOpinionMessage &&
         value.length == widget.maxLength) {

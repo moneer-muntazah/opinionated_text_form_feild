@@ -32,8 +32,11 @@ class MyApp extends StatelessWidget {
                     labelText: 'label text',
                     validator: (value) {
                       print(value);
-                      if (value.isEmpty || value == '12345678') {
-                        return 'no cannot do from validator';
+                      if (value.isEmpty) {
+                        return 'field is required';
+                      }
+                      if (value == '12345678') {
+                        return 'cannot be that easy';
                       }
                       return null;
                     },
@@ -44,9 +47,9 @@ class MyApp extends StatelessWidget {
                       return Future.delayed(
                         Duration(seconds: 5),
                         () => const Opinion(
-                            'Dont panic it is just a simultaneous validation!',
+                            'Do no panic it is just a simultaneous validation!',
                             color: Colors.amber,
-                            enforceRule: true),
+                            enforce: true),
                       );
                     },
                     onError: (e) {
